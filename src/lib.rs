@@ -4,12 +4,22 @@
  */
 use std::time::{Duration, Instant};
 
+
+#[macro_export]
+macro_rules! time_block {
+    ($name:expr, $body:block) => {{
+        let _timer = $crate::ScopedTimer::new($name);
+        let __td_result = (|| $body )();
+        __td_result
+    }};
+}
+
 #[allow(dead_code)]
 fn format_duration(nanos: f64) -> String {
     if nanos < 1_000.0 {
         format!("{nanos:.2} ns")
     } else if nanos < 100_000.0 {
-        format!("{:.2} μs", nanos / 1_000.0)
+        format!("{:.2} us", nanos / 1_000.0)
     } else if nanos < 1_000_000_000.0 {
         format!("{:.2} ms", nanos / 1_000_000.0)
     } else {
@@ -24,6 +34,7 @@ pub enum Grade {
     Bad,
 }
 
+#[cfg(feature = "enable_summary")]
 fn grade_from_nano(nanos: f64) -> Grade {
     let ms = (nanos / 1_000_000.0) as u64;
     if ms < 10 {
@@ -37,12 +48,20 @@ fn grade_from_nano(nanos: f64) -> Grade {
     }
 }
 
+#[cfg(feature = "enable_summary")]
+
 const RESET: &str = "\x1B[0m";
+#[cfg(feature = "enable_summary")]
 const RED: &str = "\x1B[31m";
+#[cfg(feature = "enable_summary")]
 const GREEN: &str = "\x1B[32m";
+#[cfg(feature = "enable_summary")]
 const YELLOW_BOLD: &str = "\x1B[1;33m";
+#[cfg(feature = "enable_summary")]
 const CYAN: &str = "\x1B[36m";
+#[cfg(feature = "enable_summary")]
 const BLUE: &str = "\x1B[34m";
+
 
 #[cfg(feature = "enable_summary")]
 pub fn summary(name: &str, total_execution_time: Duration) {
@@ -57,7 +76,7 @@ pub fn summary(name: &str, total_execution_time: Duration) {
         Grade::Bad => RED,
     };
 
-    println!(
+    eprintln!(
         "timer '{}{}{}' completed in {}{}{}",
         BLUE,
         name,
