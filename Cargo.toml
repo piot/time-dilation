@@ -1,10 +1,12 @@
 [package]
 name = "time-dilation"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2024"
 license = "MIT"
-description = "checks the time passed and prints out a summary"
-repository = "https://github.com/swamp/swamp"
+description = "Scoped timers that print execution-time summaries on drop"
+repository = "https://github.com/piot/time-dilation"
+keywords = ["timer", "benchmark", "profiling"]
+categories = ["profiling", "benchmarks"]
 
 [dependencies]
 
